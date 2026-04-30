@@ -34,9 +34,11 @@ exports.reviewCode = async (req, res) => {
     );
     console.log("Gemini Response:", JSON.stringify(response.data));
     const rawText = response.data.candidates[0].content.parts[0].text;
-    const cleaned = rawText.replace(/```json|```/g, "").trim();
+    const cleaned = rawText
+       .replace(/```json/g, "")
+       .replace(/```/g, "")
+       .trim();
     const reviewData = JSON.parse(cleaned);
-
     // Save to DB
     await Review.create({ language, code, review: JSON.stringify(reviewData) });
 
