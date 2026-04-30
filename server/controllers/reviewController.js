@@ -34,9 +34,10 @@ exports.reviewCode = async (req, res) => {
     );
     console.log("Gemini Response:", JSON.stringify(response.data));
     const cleaned = rawText
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+       .replace(/```json\n?/g, "")
+       .replace(/```\n?/g, "")
+       .replace(/\n/g, " ")
+       .trim();
 
     console.log("Cleaned text:", cleaned);
 
