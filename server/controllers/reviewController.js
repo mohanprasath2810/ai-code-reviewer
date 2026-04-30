@@ -33,12 +33,21 @@ exports.reviewCode = async (req, res) => {
       }
     );
     console.log("Gemini Response:", JSON.stringify(response.data));
-    const rawText = response.data.candidates[0].content.parts[0].text;
     const cleaned = rawText
-       .replace(/```json/g, "")
-       .replace(/```/g, "")
-       .trim();
-    const reviewData = JSON.parse(cleaned);
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    console.log("Cleaned text:", cleaned);
+
+  let reviewData;
+  try {
+    reviewData = JSON.parse(cleaned);
+  }   catch(parseError) {
+    console.error("Parse error:", parseError.message);
+    console.error("Raw cleaned text:", cleaned);
+    return res.status(500).json({ error: "Failed to parse AI response" });
+  }
     // Save to DB
     await Review.create({ language, code, review: JSON.stringify(reviewData) });
 
